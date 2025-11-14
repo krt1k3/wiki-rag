@@ -1,0 +1,5 @@
+tqdm
+pandas
+nltk
+sentence-transformers
+wikipedia-api

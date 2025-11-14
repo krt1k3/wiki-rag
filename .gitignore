@@ -1,0 +1,20 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Editor-based HTTP Client requests
+/httpRequests/
+
+# PyCharm
+.idea/
+
+# Python virtual environment
+venv/
+.env/
+
+# Bytecode
+__pycache__/
+
+# OS junk
+.DS_Store
+Thumbs.db
