@@ -1,3 +1,5 @@
+openai
+numpy
 tqdm
 pandas
 nltk
