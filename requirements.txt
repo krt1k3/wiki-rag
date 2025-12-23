@@ -1,3 +1,4 @@
+ollama
 openai
 numpy
 tqdm

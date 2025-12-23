@@ -11,22 +11,27 @@ language_model = 'hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF'
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
-query = 'which planet has the volcano olympus mons'
+query = 'which moon is the largest'
 query_emb = embedding_model.encode(query)
 df = pd.read_csv('data/overlapped_embeddings.csv')
 df['embedding'] = df['embedding'].apply(lambda s: np.array(ast.literal_eval(s)))
 df['similarity'] = df['embedding'].apply(lambda x: cosine_similarity(query_emb, x))
 df.sort_values('similarity', ascending=False, inplace=True)
+df = df[df['similarity'] > 0.5]
 
-context = df.iloc[0]
+if len(df.index) > 3:
+    df = df[df.index < 4]
+
+similarity = np.average(np.array(df['similarity']))
+context = np.array(df['text'])
 
 
 content = f'''
-Answer the Query using ONLY the provided context. 
-Generate response strictly for the query. 
-DO NOT add other details\n\n
+Answer the Query USING ONLY the provided Context.
+If the answer is no clear in the Context respond:
+"Answer not found"\n
 Query: {query}\n
-Context:\n{context.text}
+Context:\n{context}
 '''
 messages = [
     {
@@ -36,5 +41,5 @@ messages = [
 ]
 
 response = ollama.chat(model=language_model, messages=messages)
-confidence_score = f'{(context.similarity * 100):.2f}'
-print(f'{response.message.content}\n\nConfidence score: {confidence_score}')
+confidence_score = f'{(similarity * 100):.2f}'
+print(f'{response.message.content}\n\nConfidence score: {confidence_score}\n\n{context}')
