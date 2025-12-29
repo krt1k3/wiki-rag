@@ -13,7 +13,7 @@ TOPICS = ['solar system', 'the sun', 'mercury (planet)', 'venus', 'earth', 'mars
           'galilean moons', 'ring rings', 'rings of jupiter', 'rings of saturn', 'rings of uranus', 'rings of neptune',
           'pluto', 'halleys comet', 'dwarf planets' ,'comet', 'kuiper belt', 'heliosphere', 'oort cloud']
 
-def chunk_article(article, max_tokens=350, overlap=35):
+def chunk_article(article, max_tokens=150, overlap=10):
     sentences = sent_tokenize(article.text)
     article_chunks, current_chunk, tokens = [], '', 0
     for sentence in sentences:
@@ -44,7 +44,7 @@ df = pd.DataFrame(columns=['text', 'embedding', 'title', 'url'])
 for i, topic in tqdm(enumerate(TOPICS), total=len(TOPICS)):
     page = wiki.page(topic)
     if page.exists():
-        chunked_article = chunk_article_into_sentences(page)
+        chunked_article = chunk_article(page)
         embeddings = model.encode(chunked_article)
         url = f'https://en.wikipedia.org/wiki/{page.title.replace(' ', '_')}.'
         new_rows = pd.DataFrame({
@@ -55,5 +55,5 @@ for i, topic in tqdm(enumerate(TOPICS), total=len(TOPICS)):
         })
         df = pd.concat([df, new_rows], ignore_index=True)
 
-df.to_csv('data/sentences_embeddings.csv', index=True)
+df.to_csv('data/overlapped_embeddings_150_tokens_10_overlap.csv', index=True)
 
